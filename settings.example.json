@@ -1,0 +1,11 @@
+{
+  "title": "Weather Agent",
+  "subtitle": "ArcGIS Maps SDK for JavaScript - AI Agent Demo",
+  "suggestedPrompts": [
+    "What's the weather like in Tokyo right now?",
+    "Show me current conditions in New York City",
+    "Is it raining in London today?",
+    "What's the weather in Sydney, Australia?"
+  ],
+  "sceneId": "62dc4005c34b4eb1b7fab8bdd02625a9"
+}

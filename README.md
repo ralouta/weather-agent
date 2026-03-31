@@ -8,20 +8,20 @@ Built with a Vite client, an Express MCP proxy, ArcGIS Maps SDK for JavaScript A
 
 ## Run
 
-Copy both `.env` and local settings before editing.
+Copy the local config files before editing.
 
 macOS / Linux:
 
 ```bash
 cp .env.example .env
-cp public/settings.json public/settings.local.json
+cp settings.example.json settings.json
 ```
 
 Windows Command Prompt:
 
 ```bat
 copy .env.example .env
-copy public\settings.json public\settings.local.json
+copy settings.example.json settings.json
 ```
 
 Required in `.env`:
@@ -35,7 +35,16 @@ Optional in `.env`:
 - `PORTAL_URL`
 - `SERVER_PORT`
 
-Local app settings live in `public/settings.json` and should stay untracked.
+App settings are loaded from `settings.json` at the project root and served at `/settings.json`.
+The repo includes `settings.example.json` as the tracked starter file.
+If `settings.json` is missing, the app falls back to `settings.example.json` during development and production builds.
+
+Settings fields:
+
+- `title`: Header text and browser title for the app.
+- `subtitle`: Secondary label shown under the main title.
+- `suggestedPrompts`: Starter prompts shown in the AI panel.
+- `sceneId`: ArcGIS web scene item ID to load on startup.
 
 ```bash
 npm install

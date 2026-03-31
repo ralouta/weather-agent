@@ -1,7 +1,6 @@
 .env
+settings.json
 dist/
 node_modules/
 *.local
 .DS_Store
-settings.json
-public/settings.json
