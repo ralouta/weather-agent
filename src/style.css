@@ -1,0 +1,531 @@
+/* =============================================================================
+   Global reset & base
+   ============================================================================= */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --shell-gap: 16px;
+  --header-height: 60px;
+  --panel-width: min(400px, calc(100vw - 32px));
+}
+
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--calcite-font-family, "Avenir Next", sans-serif);
+  background: #dfe9ef;
+}
+
+body {
+  color: #1f2d3d;
+}
+
+.app-shell {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+arcgis-scene {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transition: filter 420ms ease;
+}
+
+.scene-host.is-loading {
+  opacity: 0;
+}
+
+.scene-host.is-ready {
+  opacity: 1;
+  transition: opacity 220ms ease, filter 420ms ease;
+}
+
+.scene-daylight {
+  display: none;
+}
+
+/* =============================================================================
+   Header
+   ============================================================================= */
+
+.app-header {
+  position: fixed;
+  top: var(--shell-gap);
+  left: var(--shell-gap);
+  right: var(--shell-gap);
+  min-height: var(--header-height);
+  z-index: 12;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: 0 18px 38px rgba(27, 52, 74, 0.16);
+  backdrop-filter: blur(18px);
+}
+
+.app-brand {
+  min-width: 0;
+}
+
+.app-subtitle {
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #5a7084;
+  margin-top: 2px;
+}
+
+.app-title {
+  margin-top: 1px;
+  font-size: clamp(1rem, 1.7vw, 1.25rem);
+  font-weight: 700;
+  color: #17324d;
+  line-height: 1.1;
+}
+
+.app-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+/* =============================================================================
+   Basemap control
+   ============================================================================= */
+
+.clock-shell {
+  position: fixed;
+  left: var(--shell-gap);
+  bottom: 40px;
+  z-index: 13;
+  display: flex;
+  align-items: flex-end;
+}
+
+.basemap-switch-shell {
+  position: fixed;
+  top: calc(var(--shell-gap) + var(--header-height) + 20px);
+  left: var(--shell-gap);
+  z-index: 13;
+  display: flex;
+  align-items: flex-start;
+}
+
+.clock-widget {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 176px;
+  padding: 10px 12px;
+  border: 1px solid rgba(200, 215, 227, 0.95);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 10px 24px rgba(27, 52, 74, 0.16);
+}
+
+.clock-widget__face {
+  position: relative;
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  border: 2px solid #bcd3e3;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at center, #ffffff 0 58%, transparent 58%),
+    linear-gradient(0deg, transparent 49%, rgba(0, 121, 193, 0.18) 49%, rgba(0, 121, 193, 0.18) 51%, transparent 51%),
+    linear-gradient(90deg, transparent 49%, rgba(0, 121, 193, 0.18) 49%, rgba(0, 121, 193, 0.18) 51%, transparent 51%),
+    #f7fbfd;
+}
+
+.clock-widget__pin {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #0079c1;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+
+.clock-widget__hand {
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  transform-origin: 50% 100%;
+  border-radius: 999px;
+}
+
+.clock-widget__hand--hour {
+  width: 3px;
+  height: 13px;
+  background: #17324d;
+}
+
+.clock-widget__hand--minute {
+  width: 2px;
+  height: 17px;
+  background: #2f6789;
+}
+
+.clock-widget__meta {
+  min-width: 0;
+}
+
+.clock-widget__time {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #17324d;
+  line-height: 1.1;
+}
+
+.clock-widget__timezone {
+  margin-top: 3px;
+  font-size: 0.67rem;
+  color: #6a8090;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.basemap-switch-btn {
+  --calcite-action-background-color: rgba(255, 255, 255, 0.96);
+  --calcite-action-background-color-hover: #ffffff;
+  --calcite-action-background-color-press: #edf6fb;
+  --calcite-action-text-color: #2b2b2b;
+  --calcite-action-text-color-press: #0079c1;
+  --calcite-action-corner-radius: 8px;
+  box-shadow: 0 10px 24px rgba(27, 52, 74, 0.16);
+  border: 1px solid #c8d7e3;
+  border-radius: 8px;
+}
+
+.basemap-switch-btn:hover {
+  border-color: #0079c1;
+}
+
+.basemap-popover {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 12px);
+  z-index: 14;
+}
+
+.basemap-menu-content {
+  width: min(360px, calc(100vw - 32px));
+  padding: 0.75rem;
+  border: 1px solid #d8e4ee;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 20px 40px rgba(31, 58, 84, 0.16);
+}
+
+.basemap-menu-title {
+  margin-bottom: 0.6rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #516473;
+}
+
+arcgis-basemap-gallery {
+  display: block;
+  max-height: min(420px, 55vh);
+  overflow: auto;
+  --calcite-color-foreground-1: #ffffff;
+  --calcite-color-foreground-2: #f7fafc;
+  --calcite-color-foreground-3: #edf4f8;
+  --calcite-color-text-1: #17324d;
+  --calcite-color-text-2: #4c6174;
+  --calcite-color-border-1: #d8e4ee;
+  --calcite-color-brand: #0079c1;
+}
+
+/* =============================================================================
+   User menu
+   ============================================================================= */
+
+.user-menu-shell {
+  position: relative;
+  z-index: 1;
+}
+
+.user-menu-button {
+  min-width: 0;
+  --calcite-button-corner-radius: 999px;
+  --calcite-button-content-spacing: 0.35rem;
+  --calcite-button-text-color: #17324d;
+  --calcite-button-text-color-hover: #17324d;
+  --calcite-button-border-color: #d8e4ee;
+  --calcite-button-border-color-hover: #0079c1;
+  --calcite-button-background-color: rgba(255, 255, 255, 0.92);
+  --calcite-button-background-color-hover: rgba(255, 255, 255, 0.98);
+}
+
+.user-menu-card__avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #0079c1 0%, #3ea0d8 100%);
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.user-menu-card__name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.user-menu-card__username {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.76rem;
+  color: #5c7387;
+}
+
+.user-menu-popover {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  min-width: 260px;
+  padding: 0.8rem;
+  border: 1px solid #d8e4ee;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 20px 40px rgba(31, 58, 84, 0.16);
+  z-index: 14;
+}
+
+.user-menu-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid #e3edf4;
+}
+
+.user-menu-card__details {
+  min-width: 0;
+}
+
+.user-menu-action {
+  margin-top: 0.8rem;
+  --calcite-button-corner-radius: 12px;
+}
+
+.user-menu-action:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+/* =============================================================================
+   Assistant panel
+   ============================================================================= */
+
+.assistant-panel {
+  position: fixed;
+  top: calc(var(--shell-gap) + var(--header-height) + 20px);
+  right: var(--shell-gap);
+  bottom: var(--shell-gap);
+  width: var(--panel-width);
+  z-index: 11;
+  display: flex;
+  flex-direction: column;
+  border-radius: 18px;
+  filter: drop-shadow(0 18px 34px rgba(17, 41, 63, 0.2));
+}
+
+.assistant-panel.collapsed {
+  display: none;
+}
+
+.assistant-launcher {
+  position: fixed;
+  right: var(--shell-gap);
+  bottom: var(--shell-gap);
+  z-index: 11;
+  filter: drop-shadow(0 10px 24px rgba(27, 52, 74, 0.22));
+}
+
+.assistant-launch-btn {
+  --calcite-action-background-color: #0079c1;
+  --calcite-action-background-color-hover: #00619b;
+  --calcite-action-background-color-press: #00527f;
+  --calcite-action-text-color: #ffffff;
+  --calcite-action-text-color-press: #ffffff;
+  --calcite-action-corner-radius: 999px;
+  box-shadow: 0 10px 24px rgba(27, 52, 74, 0.22);
+}
+
+.panel-tab {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  gap: 8px;
+  border-bottom: 1px solid #e0e8ef;
+  border-radius: 18px 18px 0 0;
+  background: rgba(255, 255, 255, 0.98);
+}
+
+.panel-tab-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #323232;
+  letter-spacing: 0.01em;
+}
+
+.panel-tab-title svg {
+  color: #0079c1;
+  flex-shrink: 0;
+}
+
+.panel-collapse-btn {
+  --calcite-action-background-color: transparent;
+  --calcite-action-background-color-hover: #f0f4f7;
+  --calcite-action-background-color-press: #e6f1f8;
+  --calcite-action-text-color: #6e6e6e;
+  --calcite-action-text-color-press: #0079c1;
+  --calcite-action-corner-radius: 8px;
+}
+
+.panel-body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 0 0 18px 18px;
+  background: #ffffff;
+  transition: max-height 0.25s ease, opacity 0.2s ease;
+  opacity: 1;
+}
+
+.panel-body.collapsed {
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+arcgis-assistant {
+  display: block;
+  height: 100%;
+  min-height: 0;
+  --calcite-color-foreground-1: #ffffff;
+  --calcite-color-foreground-2: #f5f5f5;
+  --calcite-color-foreground-3: #ebebeb;
+  --calcite-color-background: #f8f8f8;
+  --calcite-color-text-1: #323232;
+  --calcite-color-text-2: #4a4a4a;
+  --calcite-color-text-3: #6e6e6e;
+  --calcite-color-border-1: #cacaca;
+  --calcite-color-border-2: #d4d4d4;
+  --calcite-color-border-input: #949494;
+  border-radius: 0 0 18px 18px;
+  overflow: hidden;
+}
+
+#assistantMount {
+  height: 100%;
+}
+
+@media (max-width: 900px) {
+  :root {
+    --header-height: 88px;
+  }
+
+  .app-header {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 10px 12px;
+  }
+
+  .app-header__actions {
+    justify-content: flex-end;
+  }
+
+  .user-menu-button {
+    min-width: 0;
+    width: min(100%, 280px);
+  }
+
+  .assistant-panel {
+    left: auto;
+    width: min(380px, calc(100vw - 32px));
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --shell-gap: 12px;
+    --header-height: 96px;
+    --panel-width: calc(100vw - 24px);
+  }
+
+  .app-header {
+    padding: 12px;
+  }
+
+  .app-header__actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .basemap-menu-content,
+  .user-menu-popover {
+    width: min(320px, calc(100vw - 24px));
+  }
+
+  .basemap-switch-shell {
+    top: calc(var(--shell-gap) + var(--header-height) + 10px);
+  }
+
+  .clock-widget {
+    min-width: 156px;
+    padding: 8px 10px;
+  }
+
+  .clock-shell {
+    bottom: 96px;
+  }
+
+  .assistant-panel {
+    top: calc(var(--shell-gap) + var(--header-height) + 10px);
+    bottom: 12px;
+    right: 12px;
+    left: 12px;
+    width: auto;
+  }
+
+  .assistant-launcher {
+    right: 12px;
+    bottom: 12px;
+  }
+}

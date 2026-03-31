@@ -1,0 +1,33 @@
+{
+  "name": "weather-agent-3d",
+  "version": "1.0.0",
+  "description": "3D ArcGIS weather agent – MCP weather server + ArcGIS scene navigation",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "server": "tsx watch server/index.ts",
+    "start": "concurrently \"npm run dev\" \"npm run server\""
+  },
+  "dependencies": {
+    "@arcgis/ai-components": "latest",
+    "@arcgis/core": "^4.34.8",
+    "@arcgis/map-components": "^4.34.9",
+    "@modelcontextprotocol/sdk": "^1.6.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "tz-lookup": "^6.1.25"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.12.7",
+    "concurrently": "^8.2.2",
+    "tsx": "^4.11.0",
+    "typescript": "^5.4.5",
+    "vite": "^5.2.11",
+    "vite-plugin-static-copy": "^1.0.4"
+  }
+}
