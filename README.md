@@ -28,6 +28,8 @@ Required in `.env`:
 
 - `ARCGIS_CLIENT_ID`
 
+Create the OAuth app and client ID by following [this ArcGIS OAuth credential tutorial](https://developers.arcgis.com/documentation/security-and-authentication/app-authentication/tutorials/create-oauth-credentials-app-auth/online/), then add `http://localhost:5173` as a redirect URI.
+
 Optional in `.env`:
 
 - `PORTAL_URL`
