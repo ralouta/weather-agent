@@ -2,5 +2,6 @@
 dist/
 node_modules/
 *.local
+.DS_Store
 settings.json
 public/settings.json
