@@ -456,6 +456,96 @@ arcgis-assistant {
   height: 100%;
 }
 
+/* =============================================================================
+   Wind label
+   ============================================================================= */
+
+.wind-label {
+  position: fixed;
+  bottom: 120px;
+  left: var(--shell-gap, 16px);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(200, 215, 227, 0.95);
+  box-shadow: 0 10px 24px rgba(27, 52, 74, 0.16);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  color: #17324d;
+  font-family: var(--calcite-font-family, "Avenir Next", sans-serif);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  pointer-events: none;
+  z-index: 13;
+  opacity: 0;
+  transition: opacity 400ms ease;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.wind-label__arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #0079c1 0%, #3ea0d8 100%);
+  color: #ffffff;
+  font-size: 16px;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: transform 600ms ease;
+}
+
+.wind-label__cardinal {
+  font-size: 0.67rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #6a8090;
+  display: block;
+  line-height: 1;
+  margin-bottom: 3px;
+  text-transform: uppercase;
+}
+
+.wind-label__speed {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #17324d;
+  line-height: 1.1;
+}
+
+.wind-label__gust {
+  font-size: 0.67rem;
+  font-weight: 700;
+  color: #6a8090;
+  margin-left: 4px;
+}
+
+/* =============================================================================
+   Compass
+   ============================================================================= */
+
+.compass-shell {
+  position: fixed;
+  right: calc(var(--panel-width) + var(--shell-gap) + 12px);
+  bottom: 40px;
+  z-index: 13;
+  display: flex;
+  align-items: flex-end;
+}
+
+arcgis-compass {
+  /* The shadow DOM re-declares --calcite-icon-color: var(--calcite-color-text-3),
+     so we must set the upstream token; it is inherited and reaches the SVG fill. */
+  --calcite-color-text-3: #d92b2b;
+}
+
 @media (max-width: 900px) {
   :root {
     --header-height: 88px;
@@ -483,6 +573,15 @@ arcgis-assistant {
 }
 
 @media (max-width: 640px) {
+  .wind-label {
+    bottom: 180px;
+  }
+
+  .compass-shell {
+    bottom: 96px;
+    right: calc(var(--panel-width) + var(--shell-gap) + 8px);
+  }
+
   :root {
     --shell-gap: 12px;
     --header-height: 96px;

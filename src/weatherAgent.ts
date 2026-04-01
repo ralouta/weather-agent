@@ -56,7 +56,7 @@ When the user asks about weather at any location:
   For weather.wind.directionDegrees, return the direction the wind travels toward
   in the scene, not the meteorological "from" bearing. Examples: a west wind
   or "wind W" should render toward the east (90). "Eastward breeze" is also 90.
-4. Reply with a concise, conversational 2-4 sentence weather report.
+4. Reply with a concise, conversational 2-4 sentence weather report. Always mention wind speed and direction if the data includes it.
 
 Weather type selection guide:
   sunny  → clear or mostly clear sky (cloud cover < 25 %)
@@ -75,7 +75,7 @@ const FINAL_RESPONSE_PROMPT = `You are a concise weather assistant.
 Write a short response for the end user based on the tool outputs already gathered.
 Requirements:
 1. Mention the resolved place name.
-2. Summarize the current weather conditions in plain language.
+2. Summarize the current weather conditions in plain language, including wind speed and direction if the data includes it.
 3. Mention that the 3D scene has been updated.
 4. Keep it to 1-3 short sentences.
 5. Do not include JSON, markdown headings, or tool names.`;

@@ -42,6 +42,7 @@ export class SceneManager {
   private windEmphasisTimer: number | null = null;
   private windAnimationTimer: number | null = null;
   private windAnimationPhase = 0;
+  private windLabelElement: HTMLDivElement | null = null;
 
   /**
    * Resolve the SceneView from the <arcgis-scene> element.
@@ -146,6 +147,7 @@ export class SceneManager {
         this.windAnimationTimer = null;
       }
 
+      this.removeWindLabel();
       return;
     }
 
@@ -154,6 +156,7 @@ export class SceneManager {
     localWindLayer.opacity = 1;
     this.startWindAnimation(su.navigate.lat, su.navigate.lon, wind, localWindLayer);
     this.emphasizeWindLayer(localWindLayer);
+    this.updateWindLabel(wind);
   }
 
   private applyDateTime(iso: string, timeZone?: string): void {
@@ -235,12 +238,31 @@ export class SceneManager {
     wind: WindPayload,
     layer: GraphicsLayer
   ): void {
+    const effectiveSpeed = Math.max(wind.gustMps ?? wind.speedMps, wind.speedMps);
+
+    // intervalMs slows the frame clock at low speeds (lazy drift) and
+    // speeds it up at high speeds (rapid flow).
+    //   1 m/s  → ~156 ms/frame
+    //   5 m/s  → ~140 ms/frame
+    //  10 m/s  → ~120 ms/frame
+    //  25 m/s  →  50 ms/frame  (cap)
+    const intervalMs = Math.max(50, Math.round(160 - effectiveSpeed * 4));
+
+    // phaseStep controls how far each streamer jumps per frame.
+    // The floor is very low so calm winds are visually languid.
+    //   1 m/s  → 0.010
+    //   5 m/s  → 0.030
+    //  10 m/s  → 0.060
+    //  25 m/s  → 0.150
+    //  33+ m/s → 0.20  (cap)
+    const phaseStep = Math.max(0.010, Math.min(0.20, effectiveSpeed * 0.006));
+
     const renderFrame = () => {
       layer.removeAll();
       layer.addMany(
         this.createAnimatedWindGraphics(lat, lon, wind, this.windAnimationPhase)
       );
-      this.windAnimationPhase = (this.windAnimationPhase + 0.08) % 1;
+      this.windAnimationPhase = (this.windAnimationPhase + phaseStep) % 1;
     };
 
     if (this.windAnimationTimer !== null) {
@@ -249,7 +271,7 @@ export class SceneManager {
 
     this.windAnimationPhase = 0;
     renderFrame();
-    this.windAnimationTimer = window.setInterval(renderFrame, 125);
+    this.windAnimationTimer = window.setInterval(renderFrame, intervalMs);
   }
 
   private createAnimatedWindGraphics(
@@ -559,5 +581,69 @@ export class SceneManager {
     const minutes = Number(match[3] ?? "0");
 
     return sign * (hours + minutes / 60);
+  }
+
+  // ── Wind speed / direction label ──────────────────────────────────────────
+
+  private ensureWindLabel(): HTMLDivElement {
+    if (this.windLabelElement) {
+      return this.windLabelElement;
+    }
+
+    const container = this.view?.container as HTMLElement | null;
+    if (!container) {
+      throw new Error("[SceneManager] View container not available for wind label.");
+    }
+
+    const el = document.createElement("div");
+    el.className = "wind-label";
+    el.setAttribute("aria-label", "Wind conditions");
+
+    // Append to document.body so position:fixed works correctly regardless
+    // of what positioning context the SceneView container uses internally.
+    document.body.appendChild(el);
+    this.windLabelElement = el;
+    return el;
+  }
+
+  private updateWindLabel(wind: WindPayload): void {
+    try {
+      const el = this.ensureWindLabel();
+      const dir = wind.directionDegrees ?? 0;
+      const cardinal = this.degreesToCardinal(dir);
+      const speedKph = (wind.speedMps * 3.6).toFixed(1);
+      const gustStr = wind.gustMps
+        ? ` <span class="wind-label__gust">gusts ${(wind.gustMps * 3.6).toFixed(0)} km/h</span>`
+        : "";
+
+      el.innerHTML =
+        `<span class="wind-label__arrow" style="transform:rotate(${dir}deg)">↑</span>` +
+        `<span class="wind-label__meta">` +
+        `<span class="wind-label__cardinal">${cardinal} wind</span>` +
+        `<span class="wind-label__speed">${speedKph} km/h${gustStr}</span>` +
+        `</span>`;
+
+      el.style.opacity = "1";
+    } catch {
+      // container not ready yet; label will appear on next update
+    }
+  }
+
+  private removeWindLabel(): void {
+    if (!this.windLabelElement) {
+      return;
+    }
+
+    const el = this.windLabelElement;
+    el.style.opacity = "0";
+    this.windLabelElement = null;
+    window.setTimeout(() => el.remove(), 500);
+  }
+
+  /** Convert a travel-direction bearing (0 = N, 90 = E …) to an 8-point cardinal label. */
+  private degreesToCardinal(degrees: number): string {
+    const dirs = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"] as const;
+    const index = Math.round((((degrees % 360) + 360) % 360) / 45) % 8;
+    return dirs[index];
   }
 }
