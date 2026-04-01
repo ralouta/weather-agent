@@ -51,6 +51,7 @@ async function loadUiModules(): Promise<void> {
     import("@arcgis/map-components/components/arcgis-scene"),
     import("@arcgis/map-components/components/arcgis-basemap-gallery"),
     import("@arcgis/map-components/components/arcgis-daylight"),
+    import("@arcgis/map-components/components/arcgis-compass"),
     import("@arcgis/ai-components/components/arcgis-assistant"),
     import("@arcgis/ai-components/components/arcgis-assistant-agent"),
   ]);
@@ -355,6 +356,11 @@ async function init() {
   await applyInitialViewAdjustment(view);
   await bindClockToSceneCenter(view, locationClock);
   setupBasemapPopover();
+
+  const compassEl = document.getElementById("sceneCompass") as (HTMLElement & { view: SceneView }) | null;
+  if (compassEl) {
+    compassEl.view = view;
+  }
 
   const basemapGalleryEl = document.querySelector<BasemapGalleryElement>("arcgis-basemap-gallery");
   if (basemapGalleryEl) {
