@@ -1,5 +1,7 @@
 # Weather Agent 3D
 
+[![Watch the demo](https://img.youtube.com/vi/kXhutoAAvcM/maxresdefault.jpg)](https://youtu.be/kXhutoAAvcM)
+
 ## Disclaimer
 
 This is a vibe-coded ArcGIS weather app.
