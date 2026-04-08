@@ -24,7 +24,7 @@ import SunLighting from "@arcgis/core/views/3d/environment/SunLighting.js";
 import GraphicsLayer from "@arcgis/core/layers/GraphicsLayer.js";
 import Polyline from "@arcgis/core/geometry/Polyline.js";
 import SimpleLineSymbol from "@arcgis/core/symbols/SimpleLineSymbol.js";
-import type { SceneUpdate, WeatherType, WindPayload } from "./types.js";
+import type { SceneUpdate, WeatherType, WindPayload } from "../types.js";
 
 const LOCAL_WIND_LAYER_ID = "weather-agent-local-wind";
 const LOCAL_WIND_OFFSET_METERS = 260;
@@ -240,22 +240,22 @@ export class SceneManager {
   ): void {
     const effectiveSpeed = Math.max(wind.gustMps ?? wind.speedMps, wind.speedMps);
 
-    // intervalMs slows the frame clock at low speeds (lazy drift) and
-    // speeds it up at high speeds (rapid flow).
-    //   1 m/s  → ~156 ms/frame
-    //   5 m/s  → ~140 ms/frame
-    //  10 m/s  → ~120 ms/frame
-    //  25 m/s  →  50 ms/frame  (cap)
-    const intervalMs = Math.max(50, Math.round(160 - effectiveSpeed * 4));
+    // intervalMs: longer at calm speeds, shorter at storm speeds.
+    //   1 m/s  → ~312 ms/frame   (barely drifting)
+    //   5 m/s  → ~280 ms/frame   (lazy)
+    //  10 m/s  → ~240 ms/frame   (moderate)
+    //  25 m/s  → ~120 ms/frame   (fast)
+    //  35+ m/s →  80 ms/frame    (storm cap)
+    const intervalMs = Math.max(80, Math.round(320 - effectiveSpeed * 8));
 
-    // phaseStep controls how far each streamer jumps per frame.
-    // The floor is very low so calm winds are visually languid.
-    //   1 m/s  → 0.010
-    //   5 m/s  → 0.030
-    //  10 m/s  → 0.060
-    //  25 m/s  → 0.150
-    //  33+ m/s → 0.20  (cap)
-    const phaseStep = Math.max(0.010, Math.min(0.20, effectiveSpeed * 0.006));
+    // phaseStep: distance each streamer travels per frame.
+    // ~4× smaller than before so visual speed matches the actual m/s value.
+    //   1 m/s  → 0.004
+    //   5 m/s  → 0.015
+    //  10 m/s  → 0.030
+    //  25 m/s  → 0.075
+    //  27+ m/s → 0.08  (cap)
+    const phaseStep = Math.max(0.004, Math.min(0.08, effectiveSpeed * 0.003));
 
     const renderFrame = () => {
       layer.removeAll();
@@ -612,15 +612,16 @@ export class SceneManager {
       const dir = wind.directionDegrees ?? 0;
       const cardinal = this.degreesToCardinal(dir);
       const speedKph = (wind.speedMps * 3.6).toFixed(1);
-      const gustStr = wind.gustMps
-        ? ` <span class="wind-label__gust">gusts ${(wind.gustMps * 3.6).toFixed(0)} km/h</span>`
+      const gustLine = wind.gustMps
+        ? `<span class="wind-label__gust">gusts ${(wind.gustMps * 3.6).toFixed(0)} km/h</span>`
         : "";
 
       el.innerHTML =
         `<span class="wind-label__arrow" style="transform:rotate(${dir}deg)">↑</span>` +
         `<span class="wind-label__meta">` +
         `<span class="wind-label__cardinal">${cardinal} wind</span>` +
-        `<span class="wind-label__speed">${speedKph} km/h${gustStr}</span>` +
+        `<span class="wind-label__speed">${speedKph} km/h</span>` +
+        gustLine +
         `</span>`;
 
       el.style.opacity = "1";

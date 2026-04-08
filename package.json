@@ -1,7 +1,7 @@
 {
   "name": "weather-agent-3d",
   "version": "1.0.0",
-  "description": "3D ArcGIS weather agent – MCP weather server + ArcGIS scene navigation",
+  "description": "3D ArcGIS weather agent - MCP weather server + ArcGIS scene navigation",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -11,9 +11,11 @@
     "start": "concurrently \"npm run dev\" \"npm run server\""
   },
   "dependencies": {
-    "@arcgis/ai-components": "latest",
-    "@arcgis/core": "^4.34.8",
-    "@arcgis/map-components": "^4.34.9",
+    "@arcgis/ai-components": "5.0.15",
+    "@arcgis/core": "5.0.15",
+    "@arcgis/map-components": "5.0.15",
+    "@dangahagan/weather-mcp": "1.6.1",
+    "@esri/calcite-components": "5.0.2",
     "@modelcontextprotocol/sdk": "^1.6.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

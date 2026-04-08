@@ -1,30 +1,21 @@
 /**
  * mcpWeatherClient.ts
- *
- * Thin wrapper around the @modelcontextprotocol/sdk that spawns the
- * @dangahagan/weather-mcp server as a child process and exposes a
- * callTool() helper used by the agent service.
- *
- * The MCP server configuration mirrors exactly what you would place in
- * your MCP client config:
- *   {
- *     "mcpServers": {
- *       "weather": {
- *         "command": "npx",
- *         "args": ["-y", "@dangahagan/weather-mcp@latest"],
- *         "env": { "ENABLED_TOOLS": "full", "CACHE_MAX_SIZE": "2000", "LOG_LEVEL": "1" }
- *       }
- *     }
- *   }
  */
 
+import path from "node:path";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 
-// Shape of a single text content block returned by the MCP server.
 interface MCPTextContent {
   type: "text";
   text: string;
+}
+
+const ENABLED_TOOLS = "search_location,get_current_conditions,get_forecast";
+
+function getWeatherMcpCommand(): string {
+  const binName = process.platform === "win32" ? "weather-mcp.cmd" : "weather-mcp";
+  return path.resolve(process.cwd(), "node_modules", ".bin", binName);
 }
 
 export class MCPWeatherClient {
@@ -39,16 +30,18 @@ export class MCPWeatherClient {
     );
   }
 
-  /** Spawn the weather MCP server process and establish the stdio connection. */
   async connect(): Promise<void> {
+    if (this.connected) {
+      return;
+    }
+
     this.transport = new StdioClientTransport({
-      command: "npx",
-      args: ["-y", "@dangahagan/weather-mcp@latest"],
+      command: getWeatherMcpCommand(),
       env: Object.fromEntries(
         Object.entries(process.env)
-          .filter((e): e is [string, string] => e[1] !== undefined)
+          .filter((entry): entry is [string, string] => entry[1] !== undefined)
           .concat([
-            ["ENABLED_TOOLS", "full"],
+            ["ENABLED_TOOLS", ENABLED_TOOLS],
             ["CACHE_MAX_SIZE", "2000"],
             ["LOG_LEVEL", "1"],
           ])
@@ -59,29 +52,24 @@ export class MCPWeatherClient {
     this.connected = true;
   }
 
-  /**
-   * Invoke a single MCP tool by name.
-   * Returns the concatenated text from all content blocks in the response.
-   */
-  async callTool(
-    name: string,
-    args: Record<string, unknown>
-  ): Promise<string> {
+  async callTool(name: string, args: Record<string, unknown>): Promise<string> {
     if (!this.connected) {
       throw new Error("MCP client is not connected – call connect() first.");
     }
 
-    const result = await this.client.callTool({ name, arguments: args });
+    if (!name.trim()) {
+      throw new Error("MCP tool name is required.");
+    }
 
-    // The MCP result.content is an array of typed content blocks.
+    const result = await this.client.callTool({ name, arguments: args });
     const content = result.content as MCPTextContent[];
+
     return content
-      .filter((c) => c.type === "text")
-      .map((c) => c.text)
+      .filter((item) => item.type === "text")
+      .map((item) => item.text)
       .join("\n");
   }
 
-  /** Gracefully close the MCP connection and child process. */
   async disconnect(): Promise<void> {
     if (this.connected) {
       await this.client.close();

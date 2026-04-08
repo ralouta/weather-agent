@@ -6,8 +6,13 @@ interface ClockElements {
   timezoneLabel: HTMLElement;
 }
 
-interface ClockUpdate {
+export interface ClockUpdate {
   timezone?: string;
+}
+
+export interface LocationClockController {
+  update(update: ClockUpdate): void;
+  destroy(): void;
 }
 
 function readTimeParts(now: Date, timeZone?: string) {
@@ -57,29 +62,9 @@ function formatTimeZoneLabel(timeZone?: string): string {
   return timeZone.replace(/_/g, " ");
 }
 
-export function setupLocationClock() {
-  const root = document.getElementById("locationClock") as HTMLElement | null;
-  const hourHand = document.getElementById("clockHourHand") as HTMLElement | null;
-  const minuteHand = document.getElementById("clockMinuteHand") as HTMLElement | null;
-  const digitalTime = document.getElementById("clockDigitalTime") as HTMLElement | null;
-  const timezoneLabel = document.getElementById("clockTimezoneLabel") as HTMLElement | null;
-
-  if (!root || !hourHand || !minuteHand || !digitalTime || !timezoneLabel) {
-    return {
-      update() {
-        return;
-      },
-    };
-  }
-
-  const elements: ClockElements = {
-    root,
-    hourHand,
-    minuteHand,
-    digitalTime,
-    timezoneLabel,
-  };
-
+export function createLocationClockController(
+  elements: ClockElements
+): LocationClockController {
   let currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   let timerId: number | null = null;
 
@@ -109,9 +94,14 @@ export function setupLocationClock() {
   start();
 
   return {
-    update(update: ClockUpdate) {
+    update(update) {
       currentTimeZone = sanitizeTimeZone(update.timezone) || currentTimeZone;
       start();
+    },
+    destroy() {
+      if (timerId !== null) {
+        window.clearTimeout(timerId);
+      }
     },
   };
 }

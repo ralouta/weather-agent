@@ -3,11 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self' https: data: blob:; connect-src 'self' https://*.arcgis.com https://arcgis.com https://*.arcgisonline.com https://geoservices.un.org http://localhost:3001 http://127.0.0.1:3001 ws://localhost:5173 ws://127.0.0.1:5173; img-src 'self' https: data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' https: data:; worker-src 'self' blob:; script-src 'self' blob: 'wasm-unsafe-eval';"
+    />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
     <title>Weather Agent – ArcGIS 3D</title>
   </head>
 
   <body>
-    <div class="app-shell">
+    <div class="app-shell" id="appShell">
       <div class="clock-shell">
         <div class="clock-widget" id="locationClock" aria-live="polite">
           <div class="clock-widget__face" aria-hidden="true">
@@ -37,11 +42,7 @@
           aria-expanded="false"
         ></calcite-action>
 
-        <div
-          id="basemapPopover"
-          class="basemap-popover"
-          hidden
-        >
+        <div id="basemapPopover" class="basemap-popover" hidden>
           <div class="basemap-menu-content">
             <div class="basemap-menu-title">Organization basemaps</div>
             <arcgis-basemap-gallery
@@ -97,12 +98,7 @@
         </div>
       </header>
 
-      <!-- 3D Scene (fills the entire viewport) -->
-      <arcgis-scene
-        id="mainScene"
-        class="scene-host is-loading"
-        aria-busy="true"
-      >
+      <arcgis-scene id="mainScene" class="scene-host is-loading" aria-busy="true">
         <arcgis-daylight
           id="sceneDaylight"
           class="scene-daylight"
@@ -116,10 +112,7 @@
       </arcgis-scene>
     </div>
 
-    <!-- AI Assistant panel (bottom-right, collapsible) -->
     <div class="assistant-panel" id="assistantPanel">
-
-      <!-- Header tab with collapse toggle -->
       <div class="panel-tab" id="panelTab">
         <span class="panel-tab-title">
           <svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor" aria-hidden="true">
@@ -136,7 +129,6 @@
         ></calcite-action>
       </div>
 
-      <!-- Panel body (assistant is mounted programmatically in main.ts) -->
       <div class="panel-body" id="panelBody">
         <div id="assistantMount"></div>
       </div>
@@ -152,7 +144,6 @@
       ></calcite-action>
     </div>
 
-    <!-- Single module entry point; imports CSS, panel behaviour, and app logic -->
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

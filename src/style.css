@@ -130,7 +130,7 @@ arcgis-scene {
   display: flex;
   align-items: center;
   gap: 10px;
-  min-width: 176px;
+  width: 176px;
   padding: 10px 12px;
   border: 1px solid rgba(200, 215, 227, 0.95);
   border-radius: 12px;
@@ -464,10 +464,11 @@ arcgis-assistant {
   position: fixed;
   bottom: 120px;
   left: var(--shell-gap, 16px);
+  width: 176px;
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 12px;
+  padding: 10px 12px;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.96);
   border: 1px solid rgba(200, 215, 227, 0.95);
@@ -483,7 +484,6 @@ arcgis-assistant {
   z-index: 13;
   opacity: 0;
   transition: opacity 400ms ease;
-  white-space: nowrap;
   user-select: none;
 }
 
@@ -491,12 +491,12 @@ arcgis-assistant {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 46px;
+  height: 46px;
   border-radius: 999px;
   background: linear-gradient(135deg, #0079c1 0%, #3ea0d8 100%);
   color: #ffffff;
-  font-size: 16px;
+  font-size: 20px;
   line-height: 1;
   flex-shrink: 0;
   transition: transform 600ms ease;
@@ -521,10 +521,12 @@ arcgis-assistant {
 }
 
 .wind-label__gust {
+  display: block;
   font-size: 0.67rem;
   font-weight: 700;
   color: #6a8090;
-  margin-left: 4px;
+  margin-top: 3px;
+  line-height: 1;
 }
 
 /* =============================================================================
@@ -533,11 +535,12 @@ arcgis-assistant {
 
 .compass-shell {
   position: fixed;
-  right: calc(var(--panel-width) + var(--shell-gap) + 12px);
+  right: 16px;
   bottom: 40px;
   z-index: 13;
   display: flex;
   align-items: flex-end;
+  transition: right 180ms ease;
 }
 
 arcgis-compass {
@@ -579,7 +582,6 @@ arcgis-compass {
 
   .compass-shell {
     bottom: 96px;
-    right: calc(var(--panel-width) + var(--shell-gap) + 8px);
   }
 
   :root {
@@ -606,8 +608,12 @@ arcgis-compass {
     top: calc(var(--shell-gap) + var(--header-height) + 10px);
   }
 
+  .wind-label {
+    width: 156px;
+  }
+
   .clock-widget {
-    min-width: 156px;
+    width: 156px;
     padding: 8px 10px;
   }
 
