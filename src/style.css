@@ -540,7 +540,7 @@ arcgis-assistant {
   z-index: 13;
   display: flex;
   align-items: flex-end;
-  transition: right 180ms ease;
+  transition: right 180ms ease, bottom 180ms ease;
 }
 
 arcgis-compass {
