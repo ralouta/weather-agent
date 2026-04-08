@@ -43,7 +43,6 @@ export function createViewPaddingController(
       const launcherRect = options.assistantLauncher.getBoundingClientRect();
       rightPadding = Math.max(16, Math.ceil(window.innerWidth - launcherRect.left + 12));
       const launcherRight = Math.ceil(window.innerWidth - launcherRect.right);
-      const compassWidth = options.compassShell.getBoundingClientRect().width || 40;
       const compassRight = launcherRight + launcherRect.width + 8;
       const launcherBottom = Math.ceil(window.innerHeight - launcherRect.bottom);
       // override positionCompass: align vertically with launcher, sit to its left
